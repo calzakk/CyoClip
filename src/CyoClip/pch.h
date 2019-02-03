@@ -30,4 +30,8 @@ SOFTWARE.
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+
 #endif //PCH_H
