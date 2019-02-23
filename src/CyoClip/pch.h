@@ -30,6 +30,9 @@ SOFTWARE.
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <atlbase.h>
+#include <atlconv.h>
+
 #include <iostream>
 #include <stdexcept>
 #include <vector>

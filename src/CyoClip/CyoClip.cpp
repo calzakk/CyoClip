@@ -134,15 +134,26 @@ int wmain(int argc, wchar_t* argv[])
 {
 	try
 	{
+		bool echo = false;
+
+		for (int i = 1; i < argc; ++i)
+		{
+			if (_wcsicmp(argv[i], L"--echo") == 0)
+				echo = true;
+			else
+				throw std::invalid_argument(std::string("Bad argument: ") + (LPCSTR)ATL::CW2A(argv[i]));
+		}
+
 		auto hStdIn = ::GetStdHandle(STD_INPUT_HANDLE);
 
 		const size_t MaxBytes = (1024 * 1024); //1MB
 		bytes_t bytes(MaxBytes);
 
 		DWORD numBytes;
-		::ReadFile(hStdIn, &bytes[0], MaxBytes, &numBytes, nullptr);
+		::ReadFile(hStdIn, &bytes[0], MaxBytes - 2, &numBytes, nullptr); //allow for UTF-16 terminator
+		bytes[numBytes] = bytes[numBytes + 1] = 0;
 
-		bytes.resize(numBytes);
+		bytes.resize(numBytes + 2);
 
 		bool unicode;
 		int offset;
@@ -152,6 +163,14 @@ int wmain(int argc, wchar_t* argv[])
 
 		Clipboard clipboard;
 		clipboard.SetText(memory, unicode);
+
+		if (echo)
+		{
+			if (unicode)
+				std::cout << (LPCSTR)ATL::CW2A((wchar_t*)&bytes[offset]) << std::endl;
+			else
+				std::cout << (char*)&bytes[offset] << std::endl;
+		}
 
 		return 0;
 	}
